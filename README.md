@@ -100,6 +100,8 @@ class Users extends \Phalcon\Mvc\Model
 
 Comments.php:
 
+```php
+
 <?php
 
 namespace App\Models\Test;
