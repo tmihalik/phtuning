@@ -16,11 +16,9 @@ CREATE TABLE test.users (
 
 ```
 
-TestController.php:
-
 ```php
 
-<?php
+<?php   // TestController.php
 
 namespace App\Controllers;
 
@@ -44,6 +42,7 @@ class TestController extends \Phalcon\Mvc\Controller
         $rows = $query->execute();
         
         /*
+         * Standard mode:
          * Executed 1 + (total rows)
          *    (if reusable option is true at Comments.php initialize then little less)
          */
@@ -51,7 +50,10 @@ class TestController extends \Phalcon\Mvc\Controller
             $row->Comments->getUserNickName();
         }
 
-        // Executed 1 query
+        /*
+         * Tuning mode:
+         * Executed only 1 query
+         */
         foreach ($rows as $row) {
             $this->modelsManager->setReusableRecords2($row->Comments, 'User', $row->Users);
 
@@ -62,11 +64,9 @@ class TestController extends \Phalcon\Mvc\Controller
 
 ```
 
-Users.php:
-
 ```php
 
-<?php
+<?php   // Users.php
 
 namespace App\Models\Test;
 
@@ -79,30 +79,19 @@ namespace App\Models\Test;
  */
 class Users extends \Phalcon\Mvc\Model
 {
-    /**
-     * @return string
-     */
-    public function getSchema()
+    public function initialize()
     {
-        return 'test';
-    }
+        $this->setSchema('test');
 
-    /**
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'users';
+        $this->setSource('users');
     }
 }
 
 ```
 
-Comments.php:
-
 ```php
 
-<?php
+<?php   // Comments.php
 
 namespace App\Models\Test;
 
@@ -114,24 +103,12 @@ namespace App\Models\Test;
  */
 class Comments extends \Phalcon\Mvc\Model
 {
-    /**
-     * @return string
-     */
-    public function getSchema()
-    {
-        return 'test';
-    }
-
-    /**
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'comments';
-    }
-
     public function initialize()
     {
+        $this->setSchema('test');
+
+        $this->setSource('comments');
+
         $this->belongsTo('user_id', 'App\Models\Test\Users', 'id', [
             'alias'    => 'User',
             'reusable' => true,
