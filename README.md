@@ -22,29 +22,25 @@ CREATE TABLE test.users (
 
 namespace App\Controllers;
 
-/**
- * Class TestController
- *
- * @package App\Controllers
- */
 class TestController extends \Phalcon\Mvc\Controller
 {
     /**
-     * @Route("/test")
+     * Example with PHQL
+     * @Route("/test1")
      */
-    public function indexAction()
+    public function test1Action()
     {
         $sql = 'SELECT Comments.*, Users.*
             FROM App\Models\Test\Comments AS Comments
             INNER JOIN App\Models\Test\Users AS Users ON Users.id = Comments.user_id';
 
-        $query = $this->modelsManager->createQuery($sql);
-        $rows = $query->execute();
+        $rows = $this->modelsManager->createQuery($sql)->execute();
         
         /*
          * Standard mode:
-         * Executed 1 + (total rows)
-         *    (if reusable option is true at Comments.php initialize then little less)
+         * Executed query count: 1 + (found rows)
+         *    (if reusable option is true at Comments.php initialize then little less,
+         *     http://docs.phalconphp.com/en/latest/reference/models-cache.html#reusable-related-records)
          */
         foreach ($rows as $row) {
             $row->Comments->getUserNickName();
@@ -52,13 +48,35 @@ class TestController extends \Phalcon\Mvc\Controller
 
         /*
          * Tuning mode:
-         * Executed only 1 query
+         * Executed query count: 1
          */
         foreach ($rows as $row) {
             $this->modelsManager->setReusableRecords2($row->Comments, 'User', $row->Users);
 
-            $row->Comments->getUserNickName();
+            $nickname = $row->Comments->getUserNickName();
         }
+    }
+    
+    /**
+     * Example with QueryBuilder
+     * @Route("/test2")
+     */
+    public function test2Action()
+    {
+      $rows = $this->modelsManager->createBuilder()
+            ->columns('Comments.*, Users.*')
+            ->from(['Comments' => 'App\Models\Test\Comments'])
+            ->join('App\Models\Test\Users', 'Users.id = Comments.user_id', 'Users')
+            ->getQuery()
+            ->execute();
+      /*
+       * Executed query count: 1
+       */
+      foreach ($rows as $row) {
+          $this->modelsManager->setReusableRecords2($row->Comments, 'User', $row->Users);
+
+          $nickname = $row->Comments->getUserNickName();
+      }
     }
 }
 
@@ -70,13 +88,6 @@ class TestController extends \Phalcon\Mvc\Controller
 
 namespace App\Models\Test;
 
-/**
- * Class Users
- *
- * @property $id;
- * @property $nickname;
- * @package App\Test\Models
- */
 class Users extends \Phalcon\Mvc\Model
 {
     public function initialize()
@@ -95,12 +106,6 @@ class Users extends \Phalcon\Mvc\Model
 
 namespace App\Models\Test;
 
-/**
- * Class Comments
- *
- * @property Users               $User
- * @package App\Test\Models
- */
 class Comments extends \Phalcon\Mvc\Model
 {
     public function initialize()
@@ -115,9 +120,6 @@ class Comments extends \Phalcon\Mvc\Model
         ]);
     }
 
-    /**
-     * @return mixed
-     */
     public function getUserNickName()
     {
         return $this->User->nickname;
