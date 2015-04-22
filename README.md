@@ -40,7 +40,7 @@ class TestController extends \Phalcon\Mvc\Controller
          * Standard mode:
          * Executed query count: 1 + (found rows)
          *    (if reusable option is true at Comments.php initialize then little less,
-         *     http://docs.phalconphp.com/en/latest/reference/models-cache.html#reusable-related-records)
+         *     http://bit.ly/1Ghxa2A)
          */
         foreach ($rows as $row) {
             $row->Comments->getUserNickName();
