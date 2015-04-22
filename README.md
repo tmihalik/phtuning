@@ -53,7 +53,7 @@ class TestController extends \Phalcon\Mvc\Controller
         foreach ($rows as $row) {
             $this->modelsManager->setReusableRecords2($row->Comments, 'User', $row->Users);
 
-            $nickname = $row->Comments->getUserNickName();
+            $row->Comments->getUserNickName();
         }
     }
     
@@ -75,7 +75,7 @@ class TestController extends \Phalcon\Mvc\Controller
       foreach ($rows as $row) {
           $this->modelsManager->setReusableRecords2($row->Comments, 'User', $row->Users);
 
-          $nickname = $row->Comments->getUserNickName();
+          $row->Comments->getUserNickName();
       }
     }
 }
