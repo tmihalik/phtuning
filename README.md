@@ -17,6 +17,15 @@ CREATE TABLE test.users (
 ```
 
 ```php
+/**
+ * Init tuning modelsManager
+ */
+$di->setShared('modelsManager', function () {
+    return new \Phtuning\Mvc\Model\Manager;
+});
+```
+
+```php
 
 <?php   // TestController.php
 
