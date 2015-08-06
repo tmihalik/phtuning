@@ -60,7 +60,7 @@ class TestController extends \Phalcon\Mvc\Controller
          * Executed query count: 1
          */
         foreach ($rows as $row) {
-            $this->modelsManager->setReusableRecords2($row->Comments, 'User', $row->Users);
+            $this->modelsManager->setLazyLink($row->Comments, 'User', $row->Users);
 
             $row->Comments->getUserNickName();
         }
@@ -82,7 +82,7 @@ class TestController extends \Phalcon\Mvc\Controller
        * Executed query count: 1
        */
       foreach ($rows as $row) {
-          $this->modelsManager->setReusableRecords2($row->Comments, 'User', $row->Users);
+          $this->modelsManager->setLazyLink($row->Comments, 'User', $row->Users);
 
           $row->Comments->getUserNickName();
       }
