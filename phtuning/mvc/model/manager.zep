@@ -1,8 +1,6 @@
 
 namespace Phtuning\Mvc\Model;
 
-use Phalcon\Mvc\Model\Exception;
-
 class Manager extends \Phalcon\Mvc\Model\Manager
 {
     public function setLazyLink(record, string! alias, referenced)
