@@ -1,9 +1,11 @@
 
 namespace Phtuning\Mvc\Model;
 
+use Phalcon\Mvc\Model\Exception;
+
 class Manager extends \Phalcon\Mvc\Model\Manager
 {
-    public function setReusableRecords2(record, string! alias, referenced)
+    public function setLazyLink(record, string! alias, referenced)
     {
         var relation, field, fields, conditions, placeholders, findParams,
                 arguments, referencedFields, refPosition, uniqueKey;
@@ -15,12 +17,17 @@ class Manager extends \Phalcon\Mvc\Model\Manager
         /**
          * It was written based on the following:
          * https://github.com/phalcon/cphalcon/blob/2.0.0/phalcon/mvc/model/manager.zep#L1297
+         * after
+         * https://github.com/phalcon/cphalcon/blob/65b563d95b9ebd019e185b5f81b5cbf6a3a2d35d/phalcon/mvc/model/manager.zep#L1268
+         */
+
+        /**
          * Appends conditions created from the fields defined in the relation
          */
         let fields = relation->getFields();
         if typeof fields != "array" {
-            let conditions[] = "[". relation->getReferencedFields() . "] = ?0",
-                placeholders[] = record->readAttribute(fields);
+            let conditions[] = "[". relation->getReferencedFields() . "] = :APR0:",
+                placeholders["APR0"] = record->readAttribute(fields);
         } else {
 
             /**
@@ -28,8 +35,8 @@ class Manager extends \Phalcon\Mvc\Model\Manager
              */
             let referencedFields = relation->getReferencedFields();
             for refPosition, field in relation->getReferencedFields() {
-                let conditions[] = "[". referencedFields[refPosition] . "] = ?" . refPosition,
-                    placeholders[] = record->readAttribute(field);
+                let conditions[] = "[". referencedFields[refPosition] . "] = :APR" . refPosition . ":",
+                    placeholders["APR" . refPosition] = record->readAttribute(field);
             }
         }
 
